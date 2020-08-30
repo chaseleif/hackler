@@ -1,6 +1,8 @@
 # hackler
 > A Discord bot by ChaseLP
 
+### Bot responds to users saying hello and will say a joke when trigger words are used
+
 ### Current features:
 - !parse [mathexpr]
 > *converts math expression to infix notation, supports + - \* / %*

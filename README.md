@@ -2,7 +2,7 @@
 > 
 > A Discord bot by ChaseLP
 
-- In addition to commands below, bot responds to "hello" and says jokes when triggered by keywords
+- In addition to commands, bot responds to "hello" and says jokes when triggered by keywords
 
 ### Current features:
 - !parse [mathexpr]

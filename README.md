@@ -1,7 +1,7 @@
 # hackler
 > A Discord bot by ChaseLP
 
-### Bot responds to users saying hello and will say a joke when trigger words are used
+- In addition to commands below, bot responds to "hello" and says jokes when triggered by keywords
 
 ### Current features:
 - !parse [mathexpr]

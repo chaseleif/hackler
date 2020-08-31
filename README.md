@@ -2,11 +2,7 @@
 > 
 > A Discord bot by ChaseLP
 
-> (Gets bot's private key from file ".env" in the directory)
-> 
-> \# .env
-> 
-> DISCORD_TOKEN=[private key]
+> (Gets bot's private key from file ".key" in the directory)
 
 > In addition to commands, bot responds to "hello" and says jokes when triggered by keywords
 

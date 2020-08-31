@@ -4,7 +4,6 @@ import os
 import re
 import discord
 import asyncio
-from dotenv import load_dotenv
 from discord.ext import commands
 from collections import deque
 import random
@@ -15,8 +14,10 @@ import clpmenu
 import chanmod
 
 random.seed()
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
+TOKEN="bot's private token"
+with open (".key","r") as keyfile:
+    TOKEN = keyfile.read()
+
 JOKETRIGGERS = ["dumb","whatever","stupid","funny","hard","what","joke","sad","kill"]
 QUEUESIZE = 7 # how many outstanding requests to respond to
 COMMANDCHAR = '\\'

@@ -46,7 +46,8 @@ def gethelpmenu(message,commandchar):
         infomsg+= ">   " + commandchar + "make [**public**/private] channel <name>\n"
         infomsg+= ">   " + commandchar + "delete channel <name>\n"
         infomsg+= ">   " + commandchar + "allow <user> <your private channel>\n"
-        infomsg+= ">   " + commandchar + "revoke <user> <your private channel>"
+        infomsg+= ">   " + commandchar + "revoke <user> <your private channel>\n"
+        infomsg+= ">   " + commandchar + "help [command]"
     return infomsg
 
 

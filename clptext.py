@@ -32,15 +32,21 @@ async def getandprintjoke(userchannel):
     await asyncio.sleep(1)
     await userchannel.trigger_typing()
     fetchresult = requests.get(JOKEURL)
+    setup = ""
+    punchline = ""
     if fetchresult.status_code!=200:
-        return
-    joke = fetchresult.json()
+        setup = "So, I said fetchresult = requests.get(JOKEURL)"
+        punchline = "Apparently it was not OK"
+    else:
+        joke = fetchresult.json()
+        setup = joke['setup']
+        punchline = joke['punchline']
     await asyncio.sleep(2)
-    await userchannel.send(f"**{joke['setup']}**")
+    await userchannel.send(f"**{setup}**")
     await asyncio.sleep(5)
     await userchannel.trigger_typing()
     await asyncio.sleep(2)
-    await userchannel.send(f"***{joke['punchline']}***")
+    await userchannel.send(f"***{punchline}***")
 
 addops = ['+','-']
 mulops = ['*','/','%']

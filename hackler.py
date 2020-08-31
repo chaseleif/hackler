@@ -10,7 +10,8 @@ from collections import deque
 import random
 
 import clpcalc
-import textutils
+import clptext
+import clpmenu
 import chanmod
 
 random.seed()
@@ -62,7 +63,7 @@ class abot(commands.Bot):
                     else:
                         await asyncio.sleep(15) # sleep for 15 seconds
                     if waitcounter==179 or (waitcounter>279 and random.randint(0,2)==0 and waitcounter%20==0): # set an indication of idle-ness
-                        nextname,nextdetails,nexturl = textutils.getvideo()
+                        nextname,nextdetails,nexturl = clptext.getvideo()
                         streamingnow = discord.Streaming(platform="YouTube",name=nextname,details=nextdetails,url=nexturl)
                         await self.change_presence(status=discord.Status.idle, activity=streamingnow)
                 continue
@@ -76,53 +77,15 @@ class abot(commands.Bot):
                 if onepause==False:
                     onepause=True
                     continue
+            neglectcount+=1
             await self.change_presence() # ensure we are just online
             onepause=False
             message = self.messagequeue.popleft()
             # help and cmds
             if message.content.startswith("!help") or message.content==COMMANDCHAR+"commands" or message.content.startswith(COMMANDCHAR+"help"):
                 await message.channel.trigger_typing()
-                specialprint = ""
-                if len(message.content)>5 and (message.content.startswith("!help") or message.content.startswith(COMMANDCHAR+"help")):
-                    cutmsg = message.content[6:]
-                    if cutmsg.startswith("parse"):
-                        specialprint = "> I can parse math expressions with only numbers and math ops\n"
-                        specialprint+= "> The result is infix notation. Supported math operations: + - * / %\n"
-                        specialprint+= "> Example: " + COMMANDCHAR + "parse -4 + 5 + 5 * -1 - -4 / 5 % 2 + 20 * 4 - 5 * 8 + 2 - 10 % 6 - 4"
-                    elif cutmsg.startswith("solve"):
-                        specialprint = "> I can solve math expressions with only numbers and math ops\n"
-                        specialprint+= "> Supported math operations: + - * / %\n"
-                        specialprint+= "> Example: " + COMMANDCHAR + "solve -4 + 5 + 5 * -1 - -4 / 5 % 2 + 20 * 4 - 5 * 8 + 2 - 10 % 6 - 4"
-                    elif cutmsg.startswith("make"):
-                        specialprint = "> I can make public or private channels for you\n"
-                        specialprint+= "> Example: " + COMMANDCHAR + "make [**public**/private] channel <name>\n"
-                        specialprint+= ">   For private rooms a new role is created with read/write access and the general role is disallowed this access\n"
-                        specialprint+= ">     Implicit **public** room: " + COMMANDCHAR + "make channel pubchan\n"
-                        specialprint+= ">     Explicit **public** room: " + COMMANDCHAR + "make public channel pubchan\n"
-                        specialprint+= ">     **Private** room: " + COMMANDCHAR + "make private channel privchan\n"
-                        specialprint+= ">   You begin as the only user in the new group, manage other users with " + COMMANDCHAR + "allow and " + COMMANDCHAR + "revoke"
-                    elif cutmsg.startswith("delete"):
-                        specialprint = "> I can delete any channels that you have made with me\n"
-                        specialprint+= "> Example: " + COMMANDCHAR + "delete channel MyUnnecessaryRoom"
-                    elif cutmsg.startswith("allow"):
-                        specialprint = "> Allow other users to read and write in your private channels\n"
-                        specialprint+= "> Example: " + COMMANDCHAR + "allow Hackler CoolKidsRoom"
-                    elif cutmsg.startswith("revoke"):
-                        specialprint = "> Remove a user\'s access to your private room\n"
-                        specialprint+= "> Example: " + COMMANDCHAR + "revoke Hackler LameChatRoom"
-                if specialprint=="":
-                    infomsg = "> I say hello and tell jokes.\n> \n"
-                    infomsg+= "> Commands: " + COMMANDCHAR + "word [**default**/optional] <required>\n"
-                    infomsg+= ">   __math ops supported__  - + % / *\n"
-                    infomsg+= ">   " + COMMANDCHAR + "parse <__math expr__>\n"
-                    infomsg+= ">   " + COMMANDCHAR + "solve <__math expr__>\n"
-                    infomsg+= ">   " + COMMANDCHAR + "make [**public**/private] channel <name>\n"
-                    infomsg+= ">   " + COMMANDCHAR + "delete channel <name>\n"
-                    infomsg+= ">   " + COMMANDCHAR + "allow <user> <your private channel>\n"
-                    infomsg+= ">   " + COMMANDCHAR + "revoke <user> <your private channel>"
-                    await message.channel.send(infomsg)
-                else:
-                    await message.channel.send(specialprint)
+                infomsg = clpmenu.gethelpmenu(message,COMMANDCHAR)
+                await message.channel.send(infomsg)
             elif message.content.startswith(COMMANDCHAR):
                 if message.content==COMMANDCHAR+"quit":
                     await message.channel.trigger_typing()
@@ -195,7 +158,7 @@ class abot(commands.Bot):
                     await message.channel.send(returnstring)
                 elif message.content.startswith(COMMANDCHAR+'parse'):
                     await message.channel.trigger_typing()
-                    parsestring = message.author.mention + ", I **think** you mean " + textutils.parsemathstring(message.content[6:])
+                    parsestring = message.author.mention + ", I **think** you mean " + clptext.parsemathstring(message.content[6:])
                     await message.channel.send(parsestring)
             # misc prints
             elif 'hello' in message.content or 'Hello' in message.content or 'hallo' in message.content or 'Hallo' in message.content:
@@ -213,7 +176,7 @@ class abot(commands.Bot):
                     if atrigger in message.content:
                         await asyncio.sleep(1)
                         await message.channel.trigger_typing()
-                        joke = textutils.get_joke()
+                        joke = clptext.get_joke()
                         await asyncio.sleep(2)
                         if joke != False:
                             await message.channel.send(f"**{joke['setup']}**")

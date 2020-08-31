@@ -1,4 +1,4 @@
-# textutils.py
+# clptext.py
 
 import random
 import requests

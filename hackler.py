@@ -68,7 +68,7 @@ class abot(commands.Bot):
                         await self.change_presence(status=discord.Status.idle, activity=streamingnow)
                 continue
             if self.spamflag>1: # getting spammed, drop our queue
-                self.spamchannel = self.messagequeue.popleft().channel
+                self.spamchannel = self.messagequeue.pop().channel
                 self.messagequeue = deque()
                 await asyncio.sleep(15)
                 continue
@@ -77,7 +77,6 @@ class abot(commands.Bot):
                 if onepause==False:
                     onepause=True
                     continue
-            neglectcount+=1
             await self.change_presence() # ensure we are just online
             onepause=False
             message = self.messagequeue.popleft()
@@ -166,24 +165,15 @@ class abot(commands.Bot):
                 await message.channel.send(f"**Hallo** {message.author.mention}!")
             elif 'help' in message.content or 'HELP' in message.content or 'Help' in message.content:
                 await message.channel.trigger_typing()
-                await asyncio.sleep(0.2)
                 if await self.is_owner(message.author)==True:
                     await message.channel.send(f"**How** may I help **you** {message.author.mention}?")
                 else:
+                    await asyncio.sleep(3)
                     await message.channel.send("hat **jemand** was gesagt?")
             else:
                 for atrigger in JOKETRIGGERS:
                     if atrigger in message.content:
-                        await asyncio.sleep(1)
-                        await message.channel.trigger_typing()
-                        joke = clptext.get_joke()
-                        await asyncio.sleep(2)
-                        if joke != False:
-                            await message.channel.send(f"**{joke['setup']}**")
-                            await asyncio.sleep(5)
-                            await message.channel.trigger_typing()
-                            await asyncio.sleep(2)
-                            await message.channel.send(f"***{joke['punchline']}***")
+                        await clptext.getandprintjoke(message.channel)
                         break
         await self.change_presence(status=discord.Status.offline)
         await hackler.logout()

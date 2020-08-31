@@ -1,5 +1,7 @@
 # clpmenu.py
 
+
+
 def gethelpmenu(message,commandchar):
     infomsg = ""
     if len(message.content)>5 and (message.content.startswith("!help") or message.content.startswith(commandchar+"help")):
@@ -46,4 +48,6 @@ def gethelpmenu(message,commandchar):
         infomsg+= ">   " + commandchar + "allow <user> <your private channel>\n"
         infomsg+= ">   " + commandchar + "revoke <user> <your private channel>"
     return infomsg
+
+
 

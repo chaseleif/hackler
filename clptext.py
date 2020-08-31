@@ -2,6 +2,8 @@
 
 import random
 import requests
+import discord
+import asyncio
 
 random.seed()
 
@@ -26,11 +28,19 @@ def getvideo():
 
 JOKEURL = "https://official-joke-api.appspot.com/random_joke"
 
-def get_joke():
-    request = requests.get(JOKEURL)
-    if request.status_code==200:
-        return request.json()
-    return False
+async def getandprintjoke(userchannel):
+    await asyncio.sleep(1)
+    await userchannel.trigger_typing()
+    fetchresult = requests.get(JOKEURL)
+    if fetchresult.status_code!=200:
+        return
+    joke = fetchresult.json()
+    await asyncio.sleep(2)
+    await userchannel.send(f"**{joke['setup']}**")
+    await asyncio.sleep(5)
+    await userchannel.trigger_typing()
+    await asyncio.sleep(2)
+    await userchannel.send(f"***{joke['punchline']}***")
 
 addops = ['+','-']
 mulops = ['*','/','%']

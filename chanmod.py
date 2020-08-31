@@ -6,24 +6,20 @@ import time
 async def makenewchannel(theguild, channelname, requser: discord.Member):
     # use time as a counter to prevent name clashes
     newname = ""
-    makepublic = False
+    makepublic = True
+    startpos = -1
     if channelname.startswith('public_channel_'): # String pre-formatted a bit, spaces are underscores and all valid characters
-        if len(channelname)<16:
-            return "**no channel name specified**"
-        newname = channelname[15:]
-        makepublic = True
+        startpos=15
     elif channelname.startswith('private_channel_'):
-        if len(channelname)<17:
-            return "**no channel name specified**"
-        newname = channelname[16:]
+        startpos=16
         makepublic = False
     elif channelname.startswith('channel_'): # public/private not specified. make public
-        if len(channelname)<9:
-            return "**no channel name specified**"
-        newname = channelname[8:]
-        makepublic = True
+        startpos=8
     else:
         return "**format** is like \"**!make private channel foo**\" or \"**!make channel bar**\""
+    if len(channelname)<startpos+1:
+        return "**no channel name specified**"
+    newname = channelname[startpos:]
     uniqkey = int(time.time())
     newrolename = requser.name + "-" + newname + "-" + str(uniqkey)
     if makepublic==False:
@@ -37,9 +33,20 @@ async def makenewchannel(theguild, channelname, requser: discord.Member):
         noaccess = discord.PermissionOverwrite()
         noaccess.send_messages = False
         noaccess.read_messages = False
+        noaccess.view_channel = False
+        noaccess.stream = False
+        noaccess.embed_links = False
+        noaccess.attach_files = False
+        noaccess.read_message_history = False
+        noaccess.mention_everyone = False
         yesaccess = discord.PermissionOverwrite()
         yesaccess.send_messages = True
         yesaccess.read_messages = True
+        yesaccess.view_channel = True
+        yesaccess.stream = True
+        yesaccess.embed_links = True
+        yesaccess.attach_files = True
+        yesaccess.read_message_history = True
         specrules = { newrole: yesaccess, theguild.default_role: noaccess }
         try:
             await theguild.create_text_channel(name=newrolename,overwrites=specrules,reason=requser.name+" private channel")
@@ -75,19 +82,26 @@ async def deleteuserchannel(theguild, channelname, requser):
             break
     return channelname
 
-async def allowuserchannel(theguild, userchan, requser):
+async def updateuserchannelrole(theguild, userchan, requser, userop):
+    addinguser = False
+    if userop=="add":
+        addinguser=True
+    elif userop!="delete":
+        print(f"chanmod.updateuserchannelrole called with userop=\"{userop}\"\n")
     theusername = ""
     thechannel = ""
-    donewithuser = 0
+    donewithuser = False
     for c in userchan:
-        if donewithuser==0:
+        if c=='_' and theguild.get_member_named(theusername)!=None:
+            donewithuser=True
+        elif donewithuser==False:
             theusername+=c
-            if theguild.get_member_named(theusername)!=None:
-                donewithuser=1
-        elif donewithuser==1:
-            donewithuser+=1
         else:
             thechannel+=c
+    if donewithuser==False:
+        return "failure", "Couldn\'t find the user in \"" + userchan + "\""
+    if thechannel=="":
+        return "failure", "No channel to add \"" + theusername + "\" to"
     fullchannelname = ""
     for chan in theguild.channels:
         if chan.name.startswith(requser.name):
@@ -101,38 +115,10 @@ async def allowuserchannel(theguild, userchan, requser):
         return "failure", "Couldn\'t find the user " + theusername
     existingrole = discord.utils.get(theguild.roles, name=fullchannelname)
     try:
-        await otheruser.add_roles(existingrole,reason="added to private channel",atomic=True)
-    except BaseException as e:
-        return "failure", str(e)
-    return "success", theusername
-
-async def revokeuserchannel(theguild, userchan, requser):
-    theusername = ""
-    thechannel = ""
-    donewithuser = 0
-    for c in userchan:
-        if donewithuser==0:
-            theusername+=c
-            if theguild.get_member_named(theusername)!=None:
-                donewithuser=1
-        elif donewithuser==1:
-            donewithuser+=1
+        if addinguser==True:
+            await otheruser.add_roles(existingrole,reason="added to private channel",atomic=True)
         else:
-            thechannel+=c
-    fullchannelname = ""
-    for chan in theguild.channels:
-        if chan.name.startswith(requser.name):
-            if chan.name[len(requser.name)+1:len(requser.name)+len(thechannel)+1]==thechannel:
-                fullchannelname = chan.name
-                break
-    if fullchannelname=="":
-        return "failure", "**Couldn\'t find your channel** " + thechannel
-    otheruser = theguild.get_member_named(theusername)
-    if otheruser is None:
-        return "failure", "**Could not find the user** " + theusername
-    existingrole = discord.utils.get(theguild.roles, name=fullchannelname)
-    try:
-        await otheruser.remove_roles(existingrole,reason="removed from private channel",atomic=True)
+            await otheruser.remove_roles(existingrole,reason="removed from private channel",atomic=True)
     except BaseException as e:
         return "failure", str(e)
     return "success", theusername

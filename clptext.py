@@ -35,8 +35,8 @@ async def getandprintjoke(userchannel):
     setup = ""
     punchline = ""
     if fetchresult.status_code!=200:
-        setup = "So, I said fetchresult = requests.get(JOKEURL)"
-        punchline = "Apparently it was not OK"
+        setup = "What did the joke server say to the Discord bot that asked for a random joke?"
+        punchline = "They said " + str(fetchresult.status_code) + " and that is NOT ok!"
     else:
         joke = fetchresult.json()
         setup = joke['setup']

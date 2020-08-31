@@ -17,12 +17,12 @@ def getvideo():
         videosplayed = []
     choice = random.randint(0,len(videonames)-1)
     while True:
-        if choice==len(videonames):
-            choice=0
         if choice not in videosplayed:
             videosplayed.append(choice)
             return videonames[choice],videodetails[choice],videourls[choice]
         choice+=1
+        if choice==len(videonames):
+            choice=0
 
 JOKEURL = "https://official-joke-api.appspot.com/random_joke"
 

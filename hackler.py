@@ -60,7 +60,7 @@ class abot(commands.Bot):#discord.Client):
                         await asyncio.sleep(30) # sleep for 30 seconds
                     else:
                         await asyncio.sleep(15) # sleep for 15 seconds
-                    if waitcounter==179 or (waitcounter>180 and random.randint(0,1)==0 and waitcounter%20==0): # set an indication of idle-ness
+                    if waitcounter==179 or (waitcounter>279 and random.randint(0,2)==0 and waitcounter%20==0): # set an indication of idle-ness
                         nextname,nextdetails,nexturl = textutils.getvideo()
                         streamingnow = discord.Streaming(platform="YouTube",name=nextname,details=nextdetails,url=nexturl)
                         await self.change_presence(status=discord.Status.idle, activity=streamingnow)

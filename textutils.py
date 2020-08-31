@@ -6,9 +6,9 @@ import requests
 random.seed()
 
 
-videonames = ["cute puppies","cute kitties","western techno","crab rave","mowday","Sunday drive","study music","Sunday cartoons","Internet","Cantina band","improvement show"]
-videodetails = ["relaxing with the dogs","relaxing with the cats","chill western-electro","crab party!","relaxing lawnmowers","relaxing drive","focus music","cartoons","old videos","chill lounge","home improvement"]
-videourls = ["https://www.youtube.com/watch?v=CP-oVjj9Mp4&autoplay=1","https://www.youtube.com/watch?v=ZQAxN97H9yo&autoplay=1","https://www.youtube.com/watch?v=Qcp2W1-SFt4&autoplay=1","https://www.youtube.com/watch?v=-50NdPawLVY&autoplay=1","https://www.youtube.com/watch?v=BcxeZ4Wwdn0&autoplay=1","https://www.youtube.com/watch?v=zLllPmzo3fU&autoplay=1","https://www.youtube.com/watch?v=jrKVhw_RT3M?v=r_AJg5VYPPs&autoplay=1","https://www.youtube.com/watch?v=eh7lp9umG2I&autoplay=1","https://www.youtube.com/watch?v=SR9yWFspCYs&autoplay=1","https://www.youtube.com/watch?v=VmUGe8KDdGI&autoplay=1","https://www.youtube.com/watch?v=r_AJg5VYPPs&autoplay=1"]
+videonames = ["cute puppies","cute kitties","western techno","crab rave","mowday","Sunday drive","study music","Sunday cartoons","Internet","Cantina band","MC Hammer","Bob the Builder","NIS"]
+videodetails = ["relaxing with the dogs","relaxing with the cats","chill western-electro","crab party!","relaxing lawnmowers","relaxing drive","focus music","cartoons","old videos","chill lounge","relaxing hammer time","relaxing background work noise","relaxing with sirens"]
+videourls = ["https://www.youtube.com/watch?v=CP-oVjj9Mp4&autoplay=1","https://www.youtube.com/watch?v=ZQAxN97H9yo&autoplay=1","https://www.youtube.com/watch?v=Qcp2W1-SFt4&autoplay=1","https://www.youtube.com/watch?v=-50NdPawLVY&autoplay=1","https://www.youtube.com/watch?v=BcxeZ4Wwdn0&autoplay=1","https://www.youtube.com/watch?v=zLllPmzo3fU&autoplay=1","https://www.youtube.com/watch?v=jrKVhw_RT3M?v=r_AJg5VYPPs&autoplay=1","https://www.youtube.com/watch?v=eh7lp9umG2I&autoplay=1","https://www.youtube.com/watch?v=SR9yWFspCYs&autoplay=1","https://www.youtube.com/watch?v=VmUGe8KDdGI&autoplay=1","https://www.youtube.com/watch?v=r_AJg5VYPPs&autoplay=1","https://www.youtube.com/watch?v=aJCilj7qMGg&autoplay=1","https://www.youtube.com/watch?v=rIos0ya-yss&autoplay=1"]
 
 videosplayed = []
 def getvideo():

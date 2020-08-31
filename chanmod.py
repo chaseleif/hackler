@@ -9,21 +9,21 @@ async def makenewchannel(theguild, channelname, requser: discord.Member):
     makepublic = False
     if channelname.startswith('public_channel_'): # String pre-formatted a bit, spaces are underscores and all valid characters
         if len(channelname)<16:
-            return "no channel name specified"
+            return "**no channel name specified**"
         newname = channelname[15:]
         makepublic = True
     elif channelname.startswith('private_channel_'):
         if len(channelname)<17:
-            return "no channel name specified"
+            return "**no channel name specified**"
         newname = channelname[16:]
         makepublic = False
     elif channelname.startswith('channel_'): # public/private not specified. make public
         if len(channelname)<9:
-            return "no channel name specified"
+            return "**no channel name specified**"
         newname = channelname[8:]
         makepublic = True
     else:
-        return "format is like \"!make private channel foo\" or \"!make channel bar\""
+        return "**format** is like \"**!make private channel foo**\" or \"**!make channel bar**\""
     uniqkey = int(time.time())
     newrolename = requser.name + "-" + newname + "-" + str(uniqkey)
     if makepublic==False:
@@ -56,17 +56,15 @@ async def deleteuserchannel(theguild, channelname, requser):
     fullchannelname = ""
     for chan in theguild.channels:
         if chan.name.startswith(requser.name):
-            fullchannelname = chan.name
-            if fullchannelname[len(requser.name)+1:len(requser.name)+len(channelname)+1]==channelname:
+            if chan.name[len(requser.name)+1:len(requser.name)+len(channelname)+1]==channelname:
                 try:
                     await chan.delete(reason="Deleting user channel")
                 except BaseException as e:
                     return str(e)
+                fullchannelname = chan.name
                 break
-            else:
-                fullchannelname=""
     if fullchannelname=="":
-        return "Didn\'t find your channel named \"" + channelname + "\""
+        return "**Couldn\'t find your channel** \"" + channelname + "\""
     rolelist = await theguild.fetch_roles()
     for arole in rolelist:
         if arole.name==fullchannelname:
@@ -80,13 +78,14 @@ async def deleteuserchannel(theguild, channelname, requser):
 async def allowuserchannel(theguild, userchan, requser):
     theusername = ""
     thechannel = ""
-    donewithuser = False
+    donewithuser = 0
     for c in userchan:
-        if donewithuser==False:
-            if c==' ':
-                donewithuser=True
-            else:
-                theusername+=c
+        if donewithuser==0:
+            theusername+=c
+            if theguild.get_member_named(theusername)!=None:
+                donewithuser=1
+        elif donewithuser==1:
+            donewithuser+=1
         else:
             thechannel+=c
     fullchannelname = ""
@@ -96,10 +95,10 @@ async def allowuserchannel(theguild, userchan, requser):
                 fullchannelname = chan.name
                 break
     if fullchannelname=="":
-        return "failure", "Could not find your channel " + thechannel
+        return "failure", "Couldn\'t find your channel " + thechannel
     otheruser = theguild.get_member_named(theusername)
     if otheruser is None:
-        return "failure", "Could not find the user " + theusername
+        return "failure", "Couldn\'t find the user " + theusername
     existingrole = discord.utils.get(theguild.roles, name=fullchannelname)
     try:
         await otheruser.add_roles(existingrole,reason="added to private channel",atomic=True)
@@ -110,13 +109,14 @@ async def allowuserchannel(theguild, userchan, requser):
 async def revokeuserchannel(theguild, userchan, requser):
     theusername = ""
     thechannel = ""
-    donewithuser = False
+    donewithuser = 0
     for c in userchan:
-        if donewithuser==False:
-            if c==' ':
-                donewithuser=True
-            else:
-                theusername+=c
+        if donewithuser==0:
+            theusername+=c
+            if theguild.get_member_named(theusername)!=None:
+                donewithuser=1
+        elif donewithuser==1:
+            donewithuser+=1
         else:
             thechannel+=c
     fullchannelname = ""
@@ -126,10 +126,10 @@ async def revokeuserchannel(theguild, userchan, requser):
                 fullchannelname = chan.name
                 break
     if fullchannelname=="":
-        return "failure", "Could not find your channel " + thechannel
+        return "failure", "**Couldn\'t find your channel** " + thechannel
     otheruser = theguild.get_member_named(theusername)
     if otheruser is None:
-        return "failure", "Could not find the user " + theusername
+        return "failure", "**Could not find the user** " + theusername
     existingrole = discord.utils.get(theguild.roles, name=fullchannelname)
     try:
         await otheruser.remove_roles(existingrole,reason="removed from private channel",atomic=True)

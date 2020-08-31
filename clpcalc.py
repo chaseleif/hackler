@@ -72,14 +72,14 @@ def domath(message :str):
                 if str2num(rhs)==0:
                     if len(matherror)>0:
                         matherror+=", "
-                    matherror="Divide by zero"
+                    matherror="**Divide by zero**"
                 else:
                     vals.append(str2num(lhs)/str2num(rhs))
             elif postfixstr[i]=='%':
                 if str2num(rhs)==0:
                     if len(matherror)>0:
                         matherror+=", "
-                    matherror="Divide by zero"
+                    matherror="**Divide by zero**"
                 else:
                     vals.append(str2num(lhs)%str2num(rhs))
     numba=0

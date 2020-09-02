@@ -4,7 +4,7 @@
 
 def gethelpmenu(message,commandchar):
     infomsg = ""
-    if len(message.content)>5 and (message.content.startswith("!help") or message.content.startswith(commandchar+"help")):
+    if len(message.content)>6 and (message.content.startswith("!help") or message.content.startswith(commandchar+"help")):
         cutmsg = message.content[6:]
         if cutmsg.startswith("parse"):
             infomsg = "> **Yeah, this how I do the math**\n"

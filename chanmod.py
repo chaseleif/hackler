@@ -16,7 +16,7 @@ async def makenewchannel(theguild, channelname, requser: discord.Member):
     elif channelname.startswith('channel_'): # public/private not specified. make public
         startpos=8
     else:
-        return "**format** is like \"**!make private channel foo**\" or \"**!make channel bar**\""
+        return "**invalid format, get !help**"
     if len(channelname)<startpos+1:
         return "**no channel name specified**"
     newname = channelname[startpos:]
@@ -109,7 +109,7 @@ async def updateuserchannelrole(theguild, userchan, requser, userop):
                 fullchannelname = chan.name
                 break
     if fullchannelname=="":
-        return "failure", "Couldn\'t find your channel " + thechannel
+        return "failure", "Couldn\'t find your channel \"" + thechannel + "\""
     otheruser = theguild.get_member_named(theusername)
     if otheruser is None:
         return "failure", "Couldn\'t find the user " + theusername

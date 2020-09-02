@@ -8,9 +8,27 @@ import asyncio
 random.seed()
 
 
-videonames = ["cute puppies","cute kitties","western techno","crab rave","mowday","Sunday drive","study music","Sunday cartoons","Internet","Cantina band","MC Hammer","Bob the Builder","NIS"]
-videodetails = ["relaxing with the dogs","relaxing with the cats","chill western-electro","crab party!","relaxing lawnmowers","relaxing drive","focus music","cartoons","old videos","chill lounge","relaxing hammer time","relaxing background work noise","relaxing with sirens"]
-videourls = ["https://www.youtube.com/watch?v=CP-oVjj9Mp4&autoplay=1","https://www.youtube.com/watch?v=ZQAxN97H9yo&autoplay=1","https://www.youtube.com/watch?v=Qcp2W1-SFt4&autoplay=1","https://www.youtube.com/watch?v=-50NdPawLVY&autoplay=1","https://www.youtube.com/watch?v=BcxeZ4Wwdn0&autoplay=1","https://www.youtube.com/watch?v=zLllPmzo3fU&autoplay=1","https://www.youtube.com/watch?v=jrKVhw_RT3M?v=r_AJg5VYPPs&autoplay=1","https://www.youtube.com/watch?v=eh7lp9umG2I&autoplay=1","https://www.youtube.com/watch?v=SR9yWFspCYs&autoplay=1","https://www.youtube.com/watch?v=VmUGe8KDdGI&autoplay=1","https://www.youtube.com/watch?v=r_AJg5VYPPs&autoplay=1","https://www.youtube.com/watch?v=aJCilj7qMGg&autoplay=1","https://www.youtube.com/watch?v=rIos0ya-yss&autoplay=1"]
+videonames = ["cute puppies","cute kitties","western techno","crab rave",
+        "mowday","Sunday drive","study music","Sunday cartoons",
+        "Internet","Cantina band","MC Hammer","Bob the Builder","NIS"]
+videodetails = ["relaxing with the dogs","relaxing with the cats",
+        "chill western-electro","crab party!","relaxing lawnmowers",
+        "relaxing drive","focus music","cartoons","old videos",
+        "chill lounge","relaxing hammer time",
+        "relaxing background work noise","relaxing with sirens"]
+videourls = ["https://www.youtube.com/watch?v=CP-oVjj9Mp4&autoplay=1",
+        "https://www.youtube.com/watch?v=ZQAxN97H9yo&autoplay=1",
+        "https://www.youtube.com/watch?v=Qcp2W1-SFt4&autoplay=1",
+        "https://www.youtube.com/watch?v=-50NdPawLVY&autoplay=1",
+        "https://www.youtube.com/watch?v=BcxeZ4Wwdn0&autoplay=1",
+        "https://www.youtube.com/watch?v=zLllPmzo3fU&autoplay=1",
+        "https://www.youtube.com/watch?v=jrKVhw_RT3M&autoplay=1",
+        "https://www.youtube.com/watch?v=eh7lp9umG2I&autoplay=1",
+        "https://www.youtube.com/watch?v=SR9yWFspCYs&autoplay=1",
+        "https://www.youtube.com/watch?v=VmUGe8KDdGI&autoplay=1",
+        "https://www.youtube.com/watch?v=r_AJg5VYPPs&autoplay=1",
+        "https://www.youtube.com/watch?v=aJCilj7qMGg&autoplay=1",
+        "https://www.youtube.com/watch?v=rIos0ya-yss&autoplay=1"]
 
 videosplayed = []
 def getvideo():
@@ -78,8 +96,12 @@ def mathnumcompare(lhs, rhs):
     for i in range(len(operators)):
         if lhs in operators[i]:
             lhi=i
+            if rhi>=0:
+                break
         if rhs in operators[i]:
             rhi=i
+            if lhi>=0:
+                break
     if lhi<rhi:
         return -1
     if lhi==rhi:
@@ -133,28 +155,22 @@ def parsemathstring(opstring :str):
     opstring+="#" # garbage character, so last number can get caught in the loop
     for i in range(len(opstring)):
         if opstring[i].isnumeric():
-            if havenumber==True:
-                numba*=10
-                numba+=ord(opstring[i])-ord('0')
-            else:
-                havenumber=True
-                numba=ord(opstring[i])-ord('0')
+            numba*=10
+            numba+=ord(opstring[i])-ord('0')
+            havenumber=True
             if dodivision==True:
                 numdivisions+=1
-            continue
-        if opstring[i]=='.':
+        elif opstring[i]=='.':
             dodivision=True
-            continue
-        if havenumber==True:
+        elif havenumber==True:
             havenumber=False
             if negmultiplier<0:
                 numba*=negmultiplier
                 output+="("
-            if dodivision==True:
-                while numdivisions>0:
-                    numba/=10
-                    numdivisions-=1
-                dodivision=False
+            while numdivisions>0:
+                numba/=10
+                numdivisions-=1
+            dodivision=False
             output+=str(numba)
             if negmultiplier<0:
                 negmultiplier=1
@@ -162,17 +178,12 @@ def parsemathstring(opstring :str):
             output+=" "
             numba=0
         if opstring[i]=='-': #neg numbers
-            isnegative=True
             for x in range(i-1,-1,-1):
                 if opstring[x].isnumeric():
-                    isnegative=False
                     break
                 if ismathop(opstring[x])>0:
-                    isnegative=True
+                    negmultiplier=-1
                     break
-            if isnegative==True:
-                negmultiplier=-1
-                continue
         if ismathop(opstring[i])>0: #math op
             if len(ops)==0 or (len(ops)>1 and ismathop(opstring[i])>=ismathop(ops[len(ops)-1])):
                 ops.append(opstring[i])

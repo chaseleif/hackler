@@ -14,7 +14,7 @@ import clpmenu
 import chanmod
 
 random.seed()
-TOKEN="bot's private token"
+TOKEN="bot\'s private token"
 with open (".key","r") as keyfile:
     TOKEN = keyfile.read()
 
@@ -74,19 +74,21 @@ class abot(commands.Bot):
                 await asyncio.sleep(15)
                 continue
             if self.spamflag>0: # slow down response
-                await asyncio.sleep(5)
                 if onepause==False:
+                    await asyncio.sleep(5)
                     onepause=True
+                    # the spam flag could have increased
                     continue
-            await self.change_presence() # ensure we are just online
             onepause=False
             message = self.messagequeue.popleft()
             # help and cmds
             if message.content.startswith("!help") or message.content==COMMANDCHAR+"commands" or message.content.startswith(COMMANDCHAR+"help"):
+                await self.change_presence() # ensure we are just online
                 await message.channel.trigger_typing()
                 infomsg = clpmenu.gethelpmenu(message,COMMANDCHAR)
                 await message.channel.send(infomsg)
             elif message.content.startswith(COMMANDCHAR):
+                await self.change_presence() # ensure we are just online
                 if message.content==COMMANDCHAR+"quit":
                     await message.channel.trigger_typing()
                     if await self.is_owner(message.author):
@@ -162,9 +164,11 @@ class abot(commands.Bot):
                     await message.channel.send(parsestring)
             # misc prints
             elif 'hello' in message.content or 'Hello' in message.content or 'hallo' in message.content or 'Hallo' in message.content:
+                await self.change_presence() # ensure we are just online
                 await message.channel.trigger_typing()
                 await message.channel.send(f"**Hallo** {message.author.mention}!")
             elif 'help' in message.content or 'HELP' in message.content or 'Help' in message.content:
+                await self.change_presence() # ensure we are just online
                 await message.channel.trigger_typing()
                 if await self.is_owner(message.author)==True:
                     await message.channel.send(f"**How** may I help **you** {message.author.mention}?")
@@ -174,6 +178,7 @@ class abot(commands.Bot):
             else:
                 for atrigger in JOKETRIGGERS:
                     if atrigger in message.content:
+                        await self.change_presence()
                         await clptext.getandprintjoke(message.channel)
                         break
         await self.change_presence(status=discord.Status.offline)

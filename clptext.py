@@ -167,8 +167,7 @@ def parsemathstring(opstring :str):
             output+=opstring[i]
             for z in range(i+1,len(opstring)):
                 if opstring[z].isalpha() or opstring[z].isnumeric() or opstring[z]=='.':
-                    output+=opstring[z]
-                    i+=1
+                    break
                 else:
                     if doingneg==True:
                         output+=")"

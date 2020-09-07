@@ -9,11 +9,11 @@ def gethelpmenu(message,commandchar):
         if cutmsg.startswith("parse"):
             infomsg = "> **Yeah, this how I do the math**\n"
             infomsg+= "> I parse math expressions with only numbers and math ops\n"
-            infomsg+= "> The result is infix notation. Supported math operations: + - * / %\n"
+            infomsg+= "> The result is postfix, I do parenthesis and math operations: + - * / %\n"
             infomsg+= "> Example: " + commandchar + "parse -4 + 5 + 5 * -1 - -4 / 5 % 2 + 20 * 4 - 5 * 8 + 2 - 10 % 6 - 4"
         elif cutmsg.startswith("solve"):
             infomsg = "> **Ah yes, I do math, of course I do**\n"
-            infomsg+= "> I can solve math expressions with numbers and math ops\n"
+            infomsg+= "> I can solve math expressions with numbers, parenthesis and math ops\n"
             infomsg+= "> Supported math operations: + - * / %\n"
             infomsg+= "> Example: " + commandchar + "solve -4 + 5 + 5 * -1 - -4 / 5 % 2 + 20 * 4 - 5 * 8 + 2 - 10 % 6 - 4"
         elif cutmsg.startswith("make"):

@@ -162,50 +162,71 @@ def parsemathstring(opstring :str):
     output = ""
     opstring += ")"
     doingneg=False
+    didmultconcat=False
     for i in range(len(opstring)):
-        if opstring[i].isnumeric() or opstring[i].isalpha() or opstring[i]=='.':
-            output+=opstring[i]
-            for z in range(i+1,len(opstring)):
-                if opstring[z].isalpha() or opstring[z].isnumeric() or opstring[z]=='.':
-                    break
-                else:
-                    if doingneg==True:
-                        output+=")"
-                        doingneg=False
-                    output+=" "
-                    break
-        elif opstring[i]=='(':
-            ops.append(opstring[i])
-        elif ismathop(opstring[i])>0 or opstring[i]==')': #math op
-            # catch negative numbers
-            if opstring[i]=='-':
-                doingneg=True
-                for z in range(i-1,-1,-1):
-                    if opstring[z]=='(' or ismathop(opstring[z])>0:
+        currchar = opstring[i]
+        if didmultconcat==True:
+            didmultconcat=False
+            ops.append('(')
+            output+="("
+        if currchar.isnumeric() or currchar.isalpha() or currchar=='.':
+            output+=currchar
+            if i+1<len(opstring):
+                for z in range(i+1,len(opstring)):
+                    if opstring[z].isalpha() or opstring[z].isnumeric() or opstring[z]=='.':
                         break
-                    if opstring[z].isalpha() or opstring[z].isnumeric():
-                        doingneg=False
+                    elif opstring[z]=='(' or opstring[z]==')' or ismathop(opstring[z])>0:
+                        if doingneg==True:
+                            output+=")"
+                            doingneg=False
+                        output+=" "
+                        if opstring[z]=='(':
+                            didmultconcat=True # this is concat num+paren, 2+3(4. -> 2+3*(4.
+                            currchar='*' # add a multiplication here, parenthesis next loop
                         break
+            else:
                 if doingneg==True:
-                    output+='(' # closing neg numbers in parenthesis
-                    output+=opstring[i]
-                    continue
-            if output=="" or len(ops)==0 or (len(ops)>0 and ops[-1]=='(' or ismathop(opstring[i])>ismathop(ops[-1])):
-                ops.append(opstring[i])
+                    output+=")"
+                    doingneg=False
+                output+=" "
+        if currchar=='(':
+            ops.append(currchar)
+        # math ops
+        elif ismathop(currchar)>0 or currchar==')':
+            # catch negative numbers
+            if currchar=='-':
+                if doingneg==False:
+                    doingneg=True
+                    for z in range(i-1,-1,-1):
+                        if opstring[z].isalpha() or opstring[z].isnumeric() or opstring[z]=='.':
+                            doingneg=False
+                            break
+                        if ismathop(opstring[z])>0 or opstring[z]=='(' or opstring[z]==')':
+                            break
+                    if doingneg==True:
+                        output+="(-"
+                        doingneg=True
+                        continue
+            if output=="" or len(ops)==0 or (len(ops)>0 and (ops[-1]=='(' or ismathop(currchar)>ismathop(ops[-1]))):
+                ops.append(currchar)
             else: # also with opstring[i]==')'
                 while len(ops)>0:
                     if ops[-1]=='(':
                         break
-                    if opstring[i]==')' or ismathop(opstring[i])<=ismathop(ops[-1]):
+                    if currchar==')' or ismathop(currchar)<=ismathop(ops[-1]):
                         output+=ops.pop() + " "
                     else:
                         break
-                if opstring[i]==')':
+                if currchar==')':
                     if len(ops)>0 and ops[-1]=='(': # if the right one isn't matched it is mismatched
                         ops.pop()
-#                    elif (len(ops)>0 and ops[-1]!='(') or len(ops)==0):
+#                    elif (len(ops)>0 and ops[-1]!='(') or len(ops)==0): # could build error message
+                    lastop='rparen'
                 else:
-                    ops.append(opstring[i])
+                    ops.append(currchar)
+                    lastop='op'
+    # the parenthesis/multiplication concatenation can leave a trailing space
+    output = output.replace(" )",")")
     while len(ops)>1:
         if ops[-1]==")" or ops[-1]=="(":
             ops.pop()

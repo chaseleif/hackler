@@ -36,6 +36,17 @@ def domath(message :str):
     matherror=""
     skipminus=False
     for i in range(len(postfixstr)):
+        # negative numbers are surrounded by parenthesis
+        # user can also add extra parenthesis, correction attempt currently limited
+        if skipminus==True:
+            if postfixstr[i]=='-':
+                skipminus=False
+                multiplier=-1
+                continue
+            skipminus=False
+        if postfixstr[i]=='(':
+            skipminus=True
+            continue
         if postfixstr[i].isnumeric():
             havenum=True
             numba*=10
@@ -44,12 +55,6 @@ def domath(message :str):
                 numdivisions+=1
         elif postfixstr[i]=='.':
             dodivide=True
-        # negative numbers are surrounded by parenthesis
-        elif postfixstr[i]=='(':
-            skipminus=True
-        elif skipminus==True and postfixstr[i]=='-':
-            skipminus=False
-            multiplier=-1
         elif postfixstr[i]==' ' or postfixstr[i]==')': # space after every number
             if havenum==True:
                 havenum=False

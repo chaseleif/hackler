@@ -33,7 +33,8 @@ def domath(message :str):
     havenum=False
     numdivisions=0
     multiplier=1
-    matherror = ""
+    matherror=""
+    skipminus=False
     for i in range(len(postfixstr)):
         if postfixstr[i].isnumeric():
             havenum=True
@@ -43,10 +44,12 @@ def domath(message :str):
                 numdivisions+=1
         elif postfixstr[i]=='.':
             dodivide=True
-        elif postfixstr[i]=='(': # negative numbers are surrounded by parenthesis
-            i+=1
-            if postfixstr[i]=='-':
-                multiplier=-1
+        # negative numbers are surrounded by parenthesis
+        elif postfixstr[i]=='(':
+            skipminus=True
+        elif skipminus==True and postfixstr[i]=='-':
+            skipminus=False
+            multiplier=-1
         elif postfixstr[i]==' ' or postfixstr[i]==')': # space after every number
             if havenum==True:
                 havenum=False
@@ -58,7 +61,6 @@ def domath(message :str):
                 dodivide=False
                 vals.append(numba)
                 numba=0
-            continue
         elif clptext.ismathop(postfixstr[i])>0 and len(vals)>1:
             rhs=vals.pop()
             lhs=vals.pop()
@@ -72,14 +74,16 @@ def domath(message :str):
                 if str2num(rhs)==0:
                     if len(matherror)>0:
                         matherror+=", "
-                    matherror="**Divide by zero**"
+                    matherror+="**Divide by zero**"
+                    vals.append(0)
                 else:
                     vals.append(str2num(lhs)/str2num(rhs))
             elif postfixstr[i]=='%':
                 if str2num(rhs)==0:
                     if len(matherror)>0:
                         matherror+=", "
-                    matherror="**Divide by zero**"
+                    matherror+="**Divide by zero**"
+                    vals.append(0)
                 else:
                     vals.append(str2num(lhs)%str2num(rhs))
     numba=0

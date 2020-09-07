@@ -176,6 +176,8 @@ class abot(commands.Bot):
                     await asyncio.sleep(3)
                     await message.channel.send("hat **jemand** was gesagt?")
             else:
+                if self.spamflag==0:
+                    self.spamcounter-=1
                 for atrigger in JOKETRIGGERS:
                     if atrigger in message.content:
                         await self.change_presence()
@@ -193,7 +195,7 @@ class abot(commands.Bot):
             return
         if message.author.id == self.user.id:
             return
-        if await self.is_owner(message.author)!=True and self.besilent==True:
+        if self.besilent==True and await self.is_owner(message.author)!=True:
             return
         if len(self.messagequeue)<QUEUESIZE:
             self.messagequeue.append(message)

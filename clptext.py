@@ -73,8 +73,8 @@ operators = [addops,mulops]
 #return precedence level, or zero for not a math op
 def ismathop(achar):
     for i in range(len(operators)):
-        for op in operators[i]:
-            if achar==op:
+        for x in range(len(operators[i])):
+            if achar==operators[i][x]:
                 return i+1
     return 0
 
@@ -144,57 +144,73 @@ class btree:
         returnval+=str(self.val)
         return returnval
 
+def getoutputfromnumba(output, numba, negmul, numdiv):
+    if negmul<0:
+        numba*=negmul
+        output+="("
+    while numdiv>0:
+        numba/=10
+        numdiv-=1
+    output+=str(numba)
+    if negmul<0:
+        output+=")"
+    output+=" "
+    return output
+
 def parsemathstring(opstring :str):
-    ops = []
-    numba=0
-    dodivision=False
-    numdivisions=0
-    havenumber=False
-    negmultiplier=1
+    ops = ["("]
     output = ""
-    opstring+="#" # garbage character, so last number can get caught in the loop
+    opstring += ")"
+    doingneg=False
     for i in range(len(opstring)):
-        if opstring[i].isnumeric():
-            numba*=10
-            numba+=ord(opstring[i])-ord('0')
-            havenumber=True
-            if dodivision==True:
-                numdivisions+=1
-        elif opstring[i]=='.':
-            dodivision=True
-        elif havenumber==True:
-            havenumber=False
-            if negmultiplier<0:
-                numba*=negmultiplier
-                output+="("
-            while numdivisions>0:
-                numba/=10
-                numdivisions-=1
-            dodivision=False
-            output+=str(numba)
-            if negmultiplier<0:
-                negmultiplier=1
-                output+=")"
-            output+=" "
-            numba=0
-        if opstring[i]=='-': #neg numbers
-            for x in range(i-1,-1,-1):
-                if opstring[x].isnumeric():
+        if opstring[i].isnumeric() or opstring[i].isalpha() or opstring[i]=='.':
+            output+=opstring[i]
+            for z in range(i+1,len(opstring)):
+                if opstring[z].isalpha() or opstring[z].isnumeric() or opstring[z]=='.':
+                    output+=opstring[z]
+                    i+=1
+                else:
+                    if doingneg==True:
+                        output+=")"
+                        doingneg=False
+                    output+=" "
                     break
-                if ismathop(opstring[x])>0:
-                    negmultiplier=-1
-                    break
-        if ismathop(opstring[i])>0: #math op
-            if len(ops)==0 or (len(ops)>1 and ismathop(opstring[i])>=ismathop(ops[len(ops)-1])):
+        elif opstring[i]=='(':
+            ops.append(opstring[i])
+        elif ismathop(opstring[i])>0 or opstring[i]==')': #math op
+            # catch negative numbers
+            if opstring[i]=='-':
+                doingneg=True
+                for z in range(i-1,-1,-1):
+                    if opstring[z]=='(' or ismathop(opstring[z])>0:
+                        break
+                    if opstring[z].isalpha() or opstring[z].isnumeric():
+                        doingneg=False
+                        break
+                if doingneg==True:
+                    output+='(' # closing neg numbers in parenthesis
+                    output+=opstring[i]
+                    continue
+            if output=="" or len(ops)==0 or (len(ops)>0 and ops[-1]=='(' or ismathop(opstring[i])>ismathop(ops[-1])):
                 ops.append(opstring[i])
-            else:
-                for x in range(len(ops)-1,-1,-1):
-                    if ismathop(ops[x])>=ismathop(opstring[i]):
-                        output+=str(ops.pop()) + " "
+            else: # also with opstring[i]==')'
+                while len(ops)>0:
+                    if ops[-1]=='(':
+                        break
+                    if opstring[i]==')' or ismathop(opstring[i])<=ismathop(ops[-1]):
+                        output+=ops.pop() + " "
                     else:
                         break
-                ops.append(opstring[i])
-    while len(ops)>0:
+                if opstring[i]==')':
+                    if len(ops)>0 and ops[-1]=='(': # if the right one isn't matched it is mismatched
+                        ops.pop()
+#                    elif (len(ops)>0 and ops[-1]!='(') or len(ops)==0):
+                else:
+                    ops.append(opstring[i])
+    while len(ops)>1:
+        if ops[-1]==")" or ops[-1]=="(":
+            ops.pop()
+            continue
         output+=str(ops.pop())
         if len(ops)>0:
             output+=" "

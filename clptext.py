@@ -168,7 +168,7 @@ def parsemathstring(opstring :str):
         if didmultconcat==True:
             didmultconcat=False
             ops.append('(')
-            output+="("
+            output+=" "
         if currchar.isnumeric() or currchar.isalpha() or currchar=='.':
             output+=currchar
             if i+1<len(opstring):
@@ -208,7 +208,10 @@ def parsemathstring(opstring :str):
                         doingneg=True
                         continue
             if output=="" or len(ops)==0 or (len(ops)>0 and (ops[-1]=='(' or ismathop(currchar)>ismathop(ops[-1]))):
-                ops.append(currchar)
+                if ops[-1]=='(' and currchar==')':
+                    ops.pop()
+                else:
+                    ops.append(currchar)
             else: # also with opstring[i]==')'
                 while len(ops)>0:
                     if ops[-1]=='(':

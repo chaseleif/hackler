@@ -39,11 +39,10 @@ def domath(message :str):
         # negative numbers are surrounded by parenthesis
         # user can also add extra parenthesis, correction attempt currently limited
         if skipminus==True:
+            skipminus=False
             if postfixstr[i]=='-':
-                skipminus=False
                 multiplier=-1
                 continue
-            skipminus=False
         if postfixstr[i]=='(':
             skipminus=True
             continue

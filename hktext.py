@@ -1,4 +1,4 @@
-# clptext.py
+# hktext.py
 
 import random
 import requests
@@ -208,7 +208,7 @@ def parsemathstring(opstring :str):
                         doingneg=True
                         continue
             if output=="" or len(ops)==0 or (len(ops)>0 and (ops[-1]=='(' or ismathop(currchar)>ismathop(ops[-1]))):
-                if ops[-1]=='(' and currchar==')':
+                if len(ops)>0 and ops[-1]=='(' and currchar==')':
                     ops.pop()
                 else:
                     ops.append(currchar)

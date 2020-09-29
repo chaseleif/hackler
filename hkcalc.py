@@ -1,6 +1,6 @@
-# clpcalc.py
+# hkcalc.py
 
-import clptext
+import hktext
 
 def str2num(numstr):
     if type(numstr)==int or type(numstr)==float:
@@ -26,7 +26,7 @@ def str2num(numstr):
     return returnval
 
 def domath(message :str):
-    postfixstr = clptext.parsemathstring(message)
+    postfixstr = hktext.parsemathstring(message)
     vals = []
     numba=0
     dodivide=False
@@ -65,7 +65,7 @@ def domath(message :str):
                 dodivide=False
                 vals.append(numba)
                 numba=0
-        elif clptext.ismathop(postfixstr[i])>0 and len(vals)>1:
+        elif hktext.ismathop(postfixstr[i])>0 and len(vals)>1:
             rhs=vals.pop()
             lhs=vals.pop()
             if postfixstr[i]=='+':

@@ -8,12 +8,29 @@ from discord.ext import commands
 from collections import deque
 import random
 
-import clpcalc
-import clptext
-import clpmenu
+import hkcalc
+import hktext
+import hkmenu
 import chanmod
+import hkrank
 
 random.seed()
+
+rankfile = "rankinfo"
+
+managerankinggroup = "guide"
+
+class PlayerStats:
+    def __init__(self):
+        self.name = ""
+        self.id = ""
+        self.score = 0
+
+with open(rankfile,"r") as infile:
+    for line in infile.readlines():
+        line = line.rstrip()
+        print(f"line={line}")
+
 TOKEN="bot\'s private token"
 with open (".key","r") as keyfile:
     TOKEN = keyfile.read()
@@ -64,7 +81,7 @@ class abot(commands.Bot):
                     else:
                         await asyncio.sleep(15) # sleep for 15 seconds
                     if waitcounter==179 or (waitcounter>279 and random.randint(0,2)==0 and waitcounter%20==0): # set an indication of idle-ness
-                        nextname,nextdetails,nexturl = clptext.getvideo()
+                        nextname,nextdetails,nexturl = hktext.getvideo()
                         streamingnow = discord.Streaming(platform="YouTube",name=nextname,details=nextdetails,url=nexturl)
                         await self.change_presence(status=discord.Status.idle, activity=streamingnow)
                 continue
@@ -85,11 +102,27 @@ class abot(commands.Bot):
             if message.content.startswith("!help") or message.content==COMMANDCHAR+"commands" or message.content.startswith(COMMANDCHAR+"help"):
                 await self.change_presence() # ensure we are just online
                 await message.channel.trigger_typing()
-                infomsg = clpmenu.gethelpmenu(message,COMMANDCHAR)
+                infomsg = hkmenu.gethelpmenu(message,COMMANDCHAR,managerankinggroup)
                 await message.channel.send(infomsg)
             elif message.content.startswith(COMMANDCHAR):
                 await self.change_presence() # ensure we are just online
-                if message.content==COMMANDCHAR+"quit":
+                if message.content.startswith(COMMANDCHAR+"ranking"):
+                    await message.channel.trigger_typing()
+                    if message.content==COMMANDCHAR+"ranking":
+                        await hkrank.printranksummary(message)
+                    else:
+                        isallowed=False
+                        for arole in message.author.roles:
+                            if arole.name==managerankinggroup:
+                                isallowed=True
+                                break
+                        testval = message.guild.id
+    #                    await message.channel.send(f"type(val)={type(testval)} and val=\"{testval}\"")
+                        if isallowed==False:
+                            await hkrank.printranksummary(message)
+                        else:
+                            await hkrank.rankingprocessor(message,COMMANDCHAR+"ranking")
+                elif message.content==COMMANDCHAR+"quit":
                     await message.channel.trigger_typing()
                     if await self.is_owner(message.author):
                         await message.channel.send(" . . . **ok** :(")
@@ -153,15 +186,21 @@ class abot(commands.Bot):
                         await message.channel.send(f"mit **wem** redest du {message.author.mention}?")
                 elif message.content.startswith(COMMANDCHAR+'solve'):
                     await message.channel.trigger_typing()
-                    mathstring, retvalue, errormsg = clpcalc.domath(message.content[6:])
-                    returnstring = "That\'s easy " + message.author.mention + ", " + mathstring + " = **" + str(retvalue) + "**"
-                    if errormsg!="":
-                        returnstring += " (" + errormsg + ")"
-                    await message.channel.send(returnstring)
+                    try:
+                        mathstring, retvalue, errormsg = hkcalc.domath(message.content[6:])
+                        returnstring = "That\'s easy " + message.author.mention + ", " + mathstring + " = **" + str(retvalue) + "**"
+                        if errormsg!="":
+                            returnstring += " (" + errormsg + ")"
+                        await message.channel.send(returnstring)
+                    except:
+                        await message.channel.send(f"No, {message.author.mention}!")
                 elif message.content.startswith(COMMANDCHAR+'parse'):
-                    await message.channel.trigger_typing()
-                    parsestring = message.author.mention + ", I **think** you mean " + clptext.parsemathstring(message.content[6:])
-                    await message.channel.send(parsestring)
+                    try:
+                        await message.channel.trigger_typing()
+                        parsestring = message.author.mention + ", I **think** you mean " + hktext.parsemathstring(message.content[6:])
+                        await message.channel.send(parsestring)
+                    except:
+                        await message.channel.send(f"No, {message.author.mention}!")
             # misc prints
             elif 'hello' in message.content or 'Hello' in message.content or 'hallo' in message.content or 'Hallo' in message.content:
                 await self.change_presence() # ensure we are just online
@@ -181,7 +220,7 @@ class abot(commands.Bot):
                 for atrigger in JOKETRIGGERS:
                     if atrigger in message.content:
                         await self.change_presence()
-                        await clptext.getandprintjoke(message.channel)
+                        await hktext.getandprintjoke(message.channel)
                         break
         await self.change_presence(status=discord.Status.offline)
         await hackler.logout()

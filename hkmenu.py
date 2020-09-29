@@ -1,8 +1,8 @@
-# clpmenu.py
+# hkmenu.py
 
+import hkrank
 
-
-def gethelpmenu(message,commandchar):
+def gethelpmenu(message,commandchar,managerankinggroup):
     infomsg = ""
     if len(message.content)>6 and (message.content.startswith("!help") or message.content.startswith(commandchar+"help")):
         cutmsg = message.content[6:]
@@ -37,6 +37,8 @@ def gethelpmenu(message,commandchar):
             infomsg = "> **Keep your secrets**\n"
             infomsg+= "> Remove a user\'s access to your private room\n"
             infomsg+= "> Example: " + commandchar + "revoke Hackler LameChatRoom"
+        elif cutmsg.startswith("ranking"):
+            return hkrank.rankinghelpmenu(cutmsg,commandchar,message.author,managerankinggroup)
     if infomsg=="":
         infomsg = "> **I say hello and tell jokes.**\n> \n"
         infomsg+= "> Commands: " + commandchar + "word [**default**/optional] <required>\n"
@@ -47,6 +49,8 @@ def gethelpmenu(message,commandchar):
         infomsg+= ">   " + commandchar + "delete channel <name>\n"
         infomsg+= ">   " + commandchar + "allow <user> <your private channel>\n"
         infomsg+= ">   " + commandchar + "revoke <user> <your private channel>\n"
+        infomsg+= ">   " + commandchar + "ranking\n"
+        infomsg+= ">   \n"
         infomsg+= ">   " + commandchar + "help [command]"
     return infomsg
 

@@ -50,7 +50,7 @@ def rankinghelpmenu(message,commandchar,author,managerankinggroup):
         infomsg+= ">     *if the value is a number the user is assigned that value for the event*\n"
         infomsg+= ">     *the value can also be in the form +5 or -3 to do increment/decrement*\n"
         return infomsg
-    infomsg+= "> Usage: " + commandchar + "ranking\n"
+    infomsg = "> Usage: " + commandchar + "ranking\n"
     infomsg+= ">   Display scoreboard summary\n"
     infomsg+= "> *Management options*\n"
     infomsg+= ">   More information:\n"

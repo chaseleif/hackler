@@ -12,24 +12,8 @@ import hkcalc
 import hktext
 import hkmenu
 import chanmod
-import hkrank
 
 random.seed()
-
-rankfile = "rankinfo"
-
-managerankinggroup = "guide"
-
-class PlayerStats:
-    def __init__(self):
-        self.name = ""
-        self.id = ""
-        self.score = 0
-
-with open(rankfile,"r") as infile:
-    for line in infile.readlines():
-        line = line.rstrip()
-        print(f"line={line}")
 
 TOKEN="bot\'s private token"
 with open (".key","r") as keyfile:
@@ -102,27 +86,11 @@ class abot(commands.Bot):
             if message.content.startswith("!help") or message.content==COMMANDCHAR+"commands" or message.content.startswith(COMMANDCHAR+"help"):
                 await self.change_presence() # ensure we are just online
                 await message.channel.trigger_typing()
-                infomsg = hkmenu.gethelpmenu(message,COMMANDCHAR,managerankinggroup)
+                infomsg = hkmenu.gethelpmenu(message,COMMANDCHAR)
                 await message.channel.send(infomsg)
             elif message.content.startswith(COMMANDCHAR):
                 await self.change_presence() # ensure we are just online
-                if message.content.startswith(COMMANDCHAR+"ranking"):
-                    await message.channel.trigger_typing()
-                    if message.content==COMMANDCHAR+"ranking":
-                        await hkrank.printranksummary(message)
-                    else:
-                        isallowed=False
-                        for arole in message.author.roles:
-                            if arole.name==managerankinggroup:
-                                isallowed=True
-                                break
-                        testval = message.guild.id
-    #                    await message.channel.send(f"type(val)={type(testval)} and val=\"{testval}\"")
-                        if isallowed==False:
-                            await hkrank.printranksummary(message)
-                        else:
-                            await hkrank.rankingprocessor(message,COMMANDCHAR+"ranking")
-                elif message.content==COMMANDCHAR+"quit":
+                if message.content==COMMANDCHAR+"quit":
                     await message.channel.trigger_typing()
                     if await self.is_owner(message.author):
                         await message.channel.send(" . . . **ok** :(")

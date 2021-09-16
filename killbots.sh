@@ -9,3 +9,4 @@ while read line
 done < $INPUT
 
 echo "kill bots"
+rm -f bot.pid
